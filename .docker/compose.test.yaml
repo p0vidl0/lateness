@@ -1,0 +1,15 @@
+# Integration stack: postgres only. Project name lateness-integration.
+services:
+  postgres:
+    image: ${LATENESS_IMAGE_POSTGRES}
+    environment:
+      POSTGRES_USER: lateness
+      POSTGRES_PASSWORD: lateness
+      POSTGRES_DB: lateness
+    ports:
+      - "${LATENESS_POSTGRES_PORT}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lateness -d lateness"]
+      interval: 2s
+      timeout: 3s
+      retries: 30

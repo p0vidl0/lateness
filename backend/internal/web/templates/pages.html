@@ -1,0 +1,752 @@
+{{/* ---------- Layout ---------- */}}
+
+{{define "head"}}<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{.Title}} — Lateness</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/assets/app.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'%3E%3Crect width='28' height='28' rx='8' fill='%23111418'/%3E%3Ccircle cx='14' cy='14' r='7.5' fill='none' stroke='white' stroke-width='1.8'/%3E%3Cpath d='M14 9.5V14l3 2' fill='none' stroke='white' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E">
+<script src="/assets/app.js" defer></script>
+</head>
+{{end}}
+
+{{define "logo"}}<svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true"><rect width="28" height="28" rx="8" fill="#111418"></rect><circle cx="14" cy="14" r="7.5" fill="none" stroke="#FFFFFF" stroke-width="1.8"></circle><path d="M14 9.5V14l3 2" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round"></path><circle cx="21.5" cy="7" r="3" fill="#E5484D" stroke="#111418" stroke-width="1.5"></circle></svg>{{end}}
+{{define "logo-light"}}<svg width="32" height="32" viewBox="0 0 28 28" aria-hidden="true"><rect width="28" height="28" rx="8" fill="#FFFFFF"></rect><circle cx="14" cy="14" r="7.5" fill="none" stroke="#111418" stroke-width="1.8"></circle><path d="M14 9.5V14l3 2" fill="none" stroke="#111418" stroke-width="1.8" stroke-linecap="round"></path><circle cx="21.5" cy="7" r="3" fill="#E5484D" stroke="#FFFFFF" stroke-width="1.5"></circle></svg>{{end}}
+
+{{define "ic-clock"}}<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"></circle><path d="M12 7.5V12l3 2"></path></svg>{{end}}
+{{define "ic-pulse"}}<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h4l2-5 4 10 2-5h4"></path></svg>{{end}}
+{{define "ic-plus"}}<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>{{end}}
+{{define "ic-search"}}<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="M20 20l-4-4"></path></svg>{{end}}
+{{define "ic-chevron"}}<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9AA1AD" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg>{{end}}
+{{define "ic-info"}}<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5F6878" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"></circle><path d="M12 11v5M12 8h.01"></path></svg>{{end}}
+{{define "ic-pause"}}<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M9 6v12M15 6v12"></path></svg>{{end}}
+{{define "ic-play"}}<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l10-6.5z"></path></svg>{{end}}
+{{define "ic-edit"}}<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4z"></path></svg>{{end}}
+{{define "ic-logout"}}<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4M10 16l-4-4 4-4M6 12h10"></path></svg>{{end}}
+{{define "ic-check"}}<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0F7A4F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M8 12.5l2.5 2.5L16 9.5"></path></svg>{{end}}
+{{define "ic-gear"}}<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8"></path></svg>{{end}}
+{{define "ic-mail"}}<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5.5" width="17" height="13" rx="2"></rect><path d="M4 7l8 6 8-6"></path></svg>{{end}}
+{{define "ic-user"}}<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8.5" r="3.5"></circle><path d="M5 19.5c1.2-3.3 3.9-5 7-5s5.8 1.7 7 5"></path></svg>{{end}}
+{{define "ic-folder"}}<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 7.5a2 2 0 0 1 2-2h4l2 2h7a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2z"></path></svg>{{end}}
+
+{{define "app-start"}}{{template "head" .}}
+<body>
+<div class="shell">
+<aside class="side">
+  <a class="brand" href="/">{{template "logo"}}<span>Lateness</span></a>
+  {{if .Projects}}
+  <details class="switcher">
+    <summary><span class="switcher-label">Проект</span><span class="switcher-name">{{if .Project.Name}}{{.Project.Name}}{{else}}Выберите проект{{end}}</span></summary>
+    <ul>
+      {{range .Projects}}<li><a href="/p/{{.ID}}/" {{if sameID .ID $.Project.ID}}aria-current="true"{{end}}>{{template "ic-folder"}}<span>{{.Name}}</span></a></li>{{end}}
+      <li><a href="/projects/new">{{template "ic-plus"}}<span>Новый проект</span></a></li>
+    </ul>
+  </details>
+  {{end}}
+  <nav class="nav" aria-label="Разделы">
+    {{if .Project.Name}}
+    <a href="{{.Base}}/" {{if eq .Nav "expectations"}}aria-current="page"{{end}}>{{template "ic-clock"}}<span>Ожидания</span></a>
+    <a href="{{.Base}}/outlets" {{if eq .Nav "outlets"}}aria-current="page"{{end}}>{{template "ic-pulse"}}<span>Каналы</span></a>
+    <a href="{{.Base}}/settings" {{if eq .Nav "settings"}}aria-current="page"{{end}}>{{template "ic-gear"}}<span>Настройки проекта</span></a>
+    {{end}}
+    <a href="/profile" {{if eq .Nav "profile"}}aria-current="page"{{end}}>{{template "ic-user"}}<span>Профиль</span></a>
+    {{if .Me.Admin}}<a href="/admin/invites" {{if eq .Nav "invites"}}aria-current="page"{{end}}>{{template "ic-mail"}}<span>Приглашения</span></a>{{end}}
+  </nav>
+  <div class="account">
+    <span class="avatar" aria-hidden="true">{{initial .Me.Display}}</span>
+    <a class="email" href="/profile" title="{{.Me.Display}}">{{.Me.Display}}</a>
+    <form class="inline-form" method="post" action="/logout"><button class="icon-btn" type="submit" aria-label="Выйти" title="Выйти">{{template "ic-logout"}}</button></form>
+  </div>
+</aside>
+<main class="content{{if or (eq .Nav "invites") (eq .Nav "settings") (eq .Nav "projects") (eq .Nav "profile")}} narrow{{end}}">
+{{end}}
+
+{{define "app-end"}}
+</main>
+</div>
+</body>
+</html>
+{{end}}
+
+{{define "time"}}<time datetime="{{iso .}}" data-local>{{ts .}}</time>{{end}}
+{{define "pill"}}<span class="pill s-{{.}}" data-status="{{.}}"><span class="dot"></span>{{statusLabel .}}</span>{{end}}
+{{define "kind-icon"}}<span class="kind-icon k-{{.}}" aria-hidden="true">{{kindLabel .}}</span>{{end}}
+
+{{/* ---------- Auth ---------- */}}
+
+{{define "auth-start"}}{{template "head" .}}
+<body>
+<div class="auth">
+  <section class="auth-aside">
+    <a class="brand" href="/login">{{template "logo-light"}}<span>Lateness</span></a>
+    <div>
+      <h1>Узнайте, когда задача не отработала вовремя.</h1>
+      <p>Задача присылает сигнал, или сервис сам проверяет сайт по расписанию. Если окно закрылось — одно уведомление на почту, в webhook или Telegram. Без шума и повторов.</p>
+    </div>
+    <div class="demo" aria-hidden="true">
+      <div><span class="dot bg-on_time"></span><span class="grow">Синхронизация каталога</span><span class="mono" style="font-size:12px;color:#9AA1AD">через 42 мин</span></div>
+      <div class="bad"><span class="dot bg-late"></span><span class="grow">Ночной бэкап</span><span class="mono" style="font-size:12px;color:#F2A7A9">просрочено</span></div>
+    </div>
+  </section>
+  <main class="auth-main">
+    <div class="auth-box">
+{{end}}
+
+{{define "auth-end"}}
+    </div>
+  </main>
+</div>
+</body>
+</html>
+{{end}}
+
+{{define "providers"}}
+{{if .Providers}}
+<div class="or" role="separator"><span>или</span></div>
+{{range .Providers}}
+<form method="post" action="/auth/{{.ID}}">
+  {{if $.InviteToken}}<input type="hidden" name="invite" value="{{$.InviteToken}}">{{end}}
+  <button class="btn btn-ghost btn-block" type="submit">Войти через {{.Label}}</button>
+</form>
+{{end}}
+{{end}}
+{{end}}
+
+{{define "login"}}{{template "auth-start" .}}
+<div>
+  <h2>Вход</h2>
+  <p class="lead">Регистрация — только по приглашению.</p>
+</div>
+<form class="form-stack" method="post" action="/login" style="gap:16px">
+  {{if .Error}}<p class="alert" role="alert">{{.Error}}</p>{{end}}
+  <label class="field">Почта<input class="input" name="email" type="email" autocomplete="username" required value="{{.EmailField}}" placeholder="you@company.com"></label>
+  <label class="field">Пароль<input class="input" name="password" type="password" autocomplete="current-password" required></label>
+  <button class="btn btn-primary" type="submit">Войти</button>
+</form>
+{{template "providers" .}}
+{{template "auth-end" .}}{{end}}
+
+{{define "invite"}}{{template "auth-start" .}}
+<div>
+  <h2>Приглашение</h2>
+  <p class="lead">{{if .InviteOK}}Создайте аккаунт — вместе с ним появится первый проект.{{else}}По этой ссылке зарегистрироваться нельзя.{{end}}</p>
+</div>
+{{if .Error}}<p class="alert" role="alert">{{.Error}}</p>{{end}}
+{{if .InviteOK}}
+<form class="form-stack" method="post" action="/invite/{{.InviteToken}}" style="gap:16px">
+  <label class="field">Почта<input class="input" name="email" type="email" autocomplete="username" required value="{{.EmailField}}" placeholder="you@company.com"></label>
+  <label class="field"><span style="display:flex;justify-content:space-between">Пароль<span class="help">не короче 8 символов</span></span><input class="input" name="password" type="password" autocomplete="new-password" required minlength="8"></label>
+  <button class="btn btn-primary" type="submit">Создать аккаунт</button>
+</form>
+{{template "providers" .}}
+{{else}}
+<a class="btn btn-ghost" href="/login">Ко входу</a>
+{{end}}
+{{template "auth-end" .}}{{end}}
+
+{{/* ---------- Projects ---------- */}}
+
+{{define "project-new"}}{{template "app-start" .}}
+<header class="page-head"><div><h1>Новый проект</h1><p class="lead">У проекта свои ожидания и каналы уведомлений.</p></div></header>
+<section class="card card-pad">
+  <form class="form-stack" method="post" action="/projects" style="gap:16px">
+    {{if .Error}}<p class="alert" role="alert">{{.Error}}</p>{{end}}
+    <label class="field">Название<input class="input" name="name" required maxlength="200" value="{{.Project.Name}}" placeholder="Например, интернет-магазин" autofocus></label>
+    <div class="form-foot"><a class="btn btn-ghost" href="/">Отмена</a><button class="btn btn-primary" type="submit">Создать проект</button></div>
+  </form>
+</section>
+{{template "app-end" .}}{{end}}
+
+{{define "settings"}}{{template "app-start" .}}
+<header class="page-head"><div><h1>Настройки проекта</h1><p class="lead">{{.Project.Name}}</p></div></header>
+<section class="card card-pad">
+  <h2>Название</h2>
+  <form class="form-stack" method="post" action="{{.Base}}/settings" style="gap:16px">
+    {{if .Error}}<p class="alert" role="alert">{{.Error}}</p>{{end}}
+    <label class="field"><span class="sr-only">Название</span><input class="input" name="name" required maxlength="200" value="{{.Project.Name}}"></label>
+    <div class="form-foot"><button class="btn btn-primary" type="submit">Сохранить</button></div>
+  </form>
+</section>
+<section class="card card-pad" style="flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-between">
+  <div><div style="font-weight:500">Удалить проект</div><div class="help">Ожидания перестанут проверяться, URL приёма — отвечать. Данные сохраняются в журнале.</div></div>
+  <form class="inline-form" method="post" action="{{.Base}}/delete"><button class="btn btn-danger btn-sm" type="submit" data-open-dialog="project-delete-dialog">Удалить</button></form>
+</section>
+<dialog id="project-delete-dialog" aria-labelledby="project-delete-title">
+  <form method="post" action="{{.Base}}/delete">
+    <div class="dialog-body"><h2 id="project-delete-title">Удалить «{{.Project.Name}}»?</h2><p class="muted">Проект, его ожидания и каналы исчезнут из интерфейса. Задачи, которые шлют сигналы, начнут получать 404.</p></div>
+    <div class="dialog-foot"><button class="btn btn-ghost" type="button" data-close-dialog>Отмена</button><button class="btn btn-danger-solid" type="submit">Удалить</button></div>
+  </form>
+</dialog>
+{{template "app-end" .}}{{end}}
+
+{{/* ---------- Expectations list ---------- */}}
+
+{{define "list"}}{{template "app-start" .}}
+<header class="page-head">
+  <div>
+    <h1>Ожидания</h1>
+    <p class="lead">Задачи, которые присылают сигнал, и сайты, которые проверяет сервис. Если окно закроется — придёт одно уведомление.</p>
+  </div>
+  <div class="actions">
+    {{if .Rows}}<label class="search">{{template "ic-search"}}<span class="sr-only">Поиск по имени</span><input type="search" placeholder="Поиск по имени" data-search></label>{{end}}
+    <a class="btn btn-primary" href="{{.Base}}/expectations/new">{{template "ic-plus"}}Новое ожидание</a>
+  </div>
+</header>
+
+{{if .Rows}}
+<section class="summary" aria-label="Сводка по состояниям">
+  {{range .Counts}}
+  <button class="stat{{if and (eq .Status "late") .Count}} alert{{end}}" type="button" data-filter="{{.Status}}" aria-pressed="false">
+    <span class="stat-label tone-{{if eq .Status "on_time"}}ok{{else if eq .Status "quiet"}}muted{{else}}{{.Status}}{{end}}"><span class="dot bg-{{.Status}}"></span>{{statusLabel .Status}}</span>
+    <span class="stat-num">{{.Count}}</span>
+  </button>
+  {{end}}
+</section>
+
+<section class="card">
+  <div class="toolbar">
+    <div class="chips" role="group" aria-label="Фильтр по состоянию">
+      <button class="chip" type="button" data-filter="all" aria-pressed="true">Все <span class="mono">{{.Total}}</span></button>
+      {{range .Counts}}{{if .Count}}<button class="chip" type="button" data-filter="{{.Status}}" aria-pressed="false">{{statusLabel .Status}} <span class="mono">{{.Count}}</span></button>{{end}}{{end}}
+    </div>
+    <span class="small muted">Сначала просроченные, затем ближайший дедлайн</span>
+  </div>
+  <div class="scroll-x">
+    <div class="grid-table">
+      <div class="trow thead" aria-hidden="true"><span>Имя и расписание</span><span>Состояние</span><span>Дедлайн</span><span>Последний ok</span><span>Каналы</span><span></span></div>
+      {{range .Rows}}
+      <a class="trow{{if eq .Status "late"}} is-late{{end}}" href="{{$.Base}}/expectations/{{.ID}}" data-row data-status="{{.Status}}" data-name="{{.Name}}">
+        <span class="cell-stack">
+          <span class="row-name">{{.Name}}{{if .Probe}} <span class="tag">проверка</span>{{end}}</span>
+          <span class="row-sub mono">{{.Schedule}}</span>
+        </span>
+        <span class="cell-stack">
+          {{template "pill" .Status}}
+          {{if .Running}}<span class="run">прогон до {{template "time" .RunDeadline}}</span>{{end}}
+        </span>
+        <span class="cell-stack fill">
+          <span style="font-weight:500" class="{{if .DueLate}}tone-late{{end}}">{{.Due}}</span>
+          {{if .ShowDeadline}}<span class="track"><span class="bg-{{.Status}}" style="width: {{.Progress}}%"></span></span>
+          <span class="tiny mono">{{template "time" .Deadline}}</span>{{end}}
+        </span>
+        <span class="small">{{.LastOK}}</span>
+        <span class="small ellipsis" title="{{.Outlets}}">{{.Outlets}}</span>
+        {{template "ic-chevron"}}
+      </a>
+      {{end}}
+      <p class="empty" data-filter-empty hidden>Ничего не найдено.</p>
+    </div>
+  </div>
+</section>
+{{else}}
+<section class="card empty">
+  <h2>Ожиданий пока нет</h2>
+  <p>Создайте первое: задача будет присылать сигнал, или сервис сам будет проверять URL по расписанию.</p>
+  <a class="btn btn-primary" href="{{.Base}}/expectations/new">{{template "ic-plus"}}Новое ожидание</a>
+</section>
+{{end}}
+{{template "app-end" .}}{{end}}
+
+{{/* ---------- Expectation card ---------- */}}
+
+{{define "card"}}{{template "app-start" .}}
+{{$e := .Expectation}}
+<nav class="crumbs" aria-label="Навигация"><a href="{{.Base}}/">Ожидания</a><span aria-hidden="true">/</span><span style="color:var(--ink)">{{$e.Name}}</span></nav>
+
+<header class="page-head" style="align-items:flex-start">
+  <div style="display:flex;flex-direction:column;gap:8px;min-width:0">
+    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px">
+      <h1 style="overflow-wrap:anywhere">{{$e.Name}}</h1>
+      <span class="pill lg s-{{$e.Status}}" data-status="{{$e.Status}}"><span class="dot"></span>{{statusLabel $e.Status}}</span>
+    </div>
+    <span class="mono small muted">{{.Schedule}}</span>
+  </div>
+  <div class="actions">
+    {{if isHeld $e.Status}}
+    <form class="inline-form" method="post" action="{{.Base}}/expectations/{{$e.ID}}/resume"><button class="btn btn-primary" type="submit">{{template "ic-play"}}Возобновить</button></form>
+    {{else}}
+    <form class="inline-form" method="post" action="{{.Base}}/expectations/{{$e.ID}}/hold"><button class="btn btn-ghost" type="submit">{{template "ic-pause"}}Поставить на паузу</button></form>
+    {{end}}
+    <a class="btn btn-ghost" href="{{.Base}}/expectations/{{$e.ID}}/edit">{{template "ic-edit"}}Изменить</a>
+  </div>
+</header>
+
+<section class="card hero" aria-label="Текущее окно">
+  <div class="hero-top">
+    <div>
+      <div class="hero-caption">{{.Hero.Caption}}</div>
+      <div class="hero-big tone-{{.Hero.Tone}}">{{.Hero.Big}}</div>
+    </div>
+    <div class="facts">
+      <div><div class="fact-label">Окно с</div><div class="fact-value">{{template "time" $e.WindowAnchor}}</div></div>
+      <div><div class="fact-label">Дедлайн</div><div class="fact-value">{{if isHeld $e.Status}}—{{else}}{{template "time" $e.Deadline}}{{end}}</div></div>
+      <div><div class="fact-label">Последний ok</div><div class="fact-value">{{with $e.LastOK}}{{template "time" .}}{{else}}—{{end}}</div></div>
+    </div>
+  </div>
+  {{if .Window.Show}}
+  <div class="window">
+    <div class="window-bar" aria-hidden="true">
+      {{if .Window.Base}}<span class="base" style="flex: {{.Window.Base}} 1 0"></span>{{end}}
+      {{if .Window.Slack}}<span class="slack" style="flex: {{.Window.Slack}} 1 0"></span>{{end}}
+      {{if .Window.Over}}<span class="over" style="flex: {{.Window.Over}} 1 0"></span>{{end}}
+    </div>
+    {{if not .Window.Over}}<span class="window-now" style="left: {{.Window.NowPct}}%" title="Сейчас"></span>{{end}}
+    <div class="window-legend">
+      <span>начало окна · {{template "time" .Window.Anchor}}</span>
+      <span>{{if $e.Schedule.Slack}}<span style="display:inline-block;width:10px;height:10px;border-radius:2px;vertical-align:-1px;background:repeating-linear-gradient(135deg,#F5B54A 0 2px,#FBE3B8 2px 4px)"></span> допуск · {{end}}дедлайн {{template "time" .Window.Deadline}}</span>
+      <span class="{{if .Window.Late}}tone-late{{end}}" style="font-weight:500">сейчас</span>
+    </div>
+  </div>
+  {{end}}
+  {{if .Hero.Hint}}<div class="note">{{template "ic-info"}}<span>{{.Hero.Hint}}</span></div>{{end}}
+</section>
+
+<div class="cols">
+  <section class="card col-main" aria-label="События" style="gap:0">
+    <div class="card-head" style="padding:16px 20px;border-bottom:1px solid var(--line-soft)">
+      <h2>События</h2>
+      {{if .Events}}
+      <div class="seg" role="group" aria-label="Тип событий">
+        <button type="button" data-ev-filter="all" aria-pressed="true">Все</button>
+        <button type="button" data-ev-filter="signal" aria-pressed="false">{{if .ProbeText}}Проверки{{else}}Сигналы{{end}}</button>
+        <button type="button" data-ev-filter="transition" aria-pressed="false">Смены</button>
+        <button type="button" data-ev-filter="delivery" aria-pressed="false">Доставки</button>
+      </div>
+      {{end}}
+    </div>
+    {{if .Events}}
+    <ol class="timeline">
+      {{range .Events}}
+      <li data-ev="{{.Kind}}" data-delivery="{{if .Deliveries}}1{{else}}0{{end}}">
+        <span class="glyph g-{{.Tone}}" aria-hidden="true">{{.Glyph}}</span>
+        <div class="ev-body">
+          <div class="ev-title">{{.Title}}</div>
+          {{if .Note}}<div class="ev-note">{{.Note}}</div>{{end}}
+          {{range .Deliveries}}
+          <div class="ev-delivery"><span class="dot tone-{{.Tone}}"></span><span style="font-weight:500">{{.Outlet}}</span><span class="tone-{{.Tone}}">{{.State}}</span>{{if .Error}}<span class="mono tone-late" style="font-size:12px;overflow-wrap:anywhere">{{.Error}}</span>{{end}}</div>
+          {{end}}
+        </div>
+        <span class="ev-at">{{template "time" .At}}</span>
+      </li>
+      {{end}}
+    </ol>
+    {{else}}
+    <div class="empty"><h2>Событий пока нет</h2><p>Здесь появятся {{if .ProbeText}}проверки{{else}}сигналы{{end}}, смены состояния и доставки уведомлений.</p></div>
+    {{end}}
+  </section>
+
+  <div class="col-side">
+    {{if .ProbeText}}
+    <section class="card card-pad" aria-label="Проверка">
+      <div>
+        <h2>Проверка</h2>
+        <p class="help" style="margin-top:4px;font-size:13px">Сервис сам отправляет запрос по расписанию. Ошибка повторяется через 30 с; просрочка наступает, если за допуск не было ни одного успеха.</p>
+      </div>
+      <div class="copy-field"><span class="mono" id="probe-target">{{.ProbeText}}</span></div>
+      {{with $e.ProbeAt}}{{if not (isHeld $e.Status)}}<p class="small">Следующая проверка: {{template "time" .}}</p>{{end}}{{end}}
+    </section>
+    {{else}}
+    <section class="card card-pad" aria-label="Приём сигнала">
+      <div>
+        <h2>Приём сигнала</h2>
+        <p class="help" style="margin-top:4px;font-size:13px">Без сессии и ключа. Токен в URL — секрет этого ожидания.</p>
+      </div>
+      <div class="copy-field">
+        <span class="mono" id="intake-url">{{.IntakeURL}}</span>
+        <button class="copy-btn" type="button" data-copy-from="intake-url" hidden>Копировать</button>
+      </div>
+      <div class="tabs" role="tablist" aria-label="Исход">
+        <button class="tab" type="button" role="tab" id="tab-ok" aria-controls="panel-ok" aria-selected="true">ok</button>
+        <button class="tab" type="button" role="tab" id="tab-begin" aria-controls="panel-begin" aria-selected="false" tabindex="-1">begin</button>
+        <button class="tab" type="button" role="tab" id="tab-fail" aria-controls="panel-fail" aria-selected="false" tabindex="-1">fail</button>
+      </div>
+      <div id="panel-ok" role="tabpanel" aria-labelledby="tab-ok" class="form-stack" style="gap:10px">
+        <p class="small">Подтверждает ритм: новое окно считается от момента приёма, прогон сбрасывается.</p>
+        <div class="code-wrap"><pre class="code" id="code-ok">curl -fsS -X POST {{.IntakeURL}} \
+  -H 'content-type: application/json' \
+  -d '{"outcome":"ok"}'</pre><button class="copy-btn" type="button" data-copy-from="code-ok" hidden>Копировать</button></div>
+      </div>
+      <div id="panel-begin" role="tabpanel" aria-labelledby="tab-begin" class="form-stack" style="gap:10px" hidden>
+        <p class="small">Вооружает прогон: если ok не придёт в пределах допуска, ожидание станет просроченным. Окно ритма не сдвигается.</p>
+        <div class="code-wrap"><pre class="code" id="code-begin">curl -fsS -X POST {{.IntakeURL}} \
+  -H 'content-type: application/json' \
+  -d '{"outcome":"begin"}'</pre><button class="copy-btn" type="button" data-copy-from="code-begin" hidden>Копировать</button></div>
+      </div>
+      <div id="panel-fail" role="tabpanel" aria-labelledby="tab-fail" class="form-stack" style="gap:10px" hidden>
+        <p class="small">Явный срыв: сразу «Просрочено» и одно уведомление в каждый канал.</p>
+        <div class="code-wrap"><pre class="code" id="code-fail">curl -fsS -X POST {{.IntakeURL}} \
+  -H 'content-type: application/json' \
+  -d '{"outcome":"fail","note":"…"}'</pre><button class="copy-btn" type="button" data-copy-from="code-fail" hidden>Копировать</button></div>
+      </div>
+      <p class="help">Поле <span class="mono">note</span> — до 2000 символов. Время берётся с часов сервера.</p>
+    </section>
+    {{end}}
+
+    <section class="card card-pad" aria-label="Каналы">
+      <div class="card-head"><h2>Куда уведомлять</h2><a href="{{.Base}}/expectations/{{$e.ID}}/edit" class="small">Изменить</a></div>
+      {{range .Assigned}}
+      <a class="outlet-line" href="{{$.Base}}/outlets/{{.ID}}" style="color:inherit;text-decoration:none">
+        {{template "kind-icon" .Kind}}
+        <span style="min-width:0"><span style="display:block;font-weight:500">{{.Name}}</span><span class="help ellipsis" style="display:block">{{.Target}}</span></span>
+      </a>
+      {{else}}
+      <p class="small muted">Каналы не выбраны — уведомлениям некуда уйти.</p>
+      {{end}}
+    </section>
+
+    <section class="card card-pad" aria-label="Удаление" style="flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-between">
+      <div><div style="font-weight:500">Удалить ожидание</div><div class="help">{{if .ProbeText}}Проверки прекратятся.{{else}}URL приёма перестанет работать.{{end}}</div></div>
+      <form class="inline-form" method="post" action="{{.Base}}/expectations/{{$e.ID}}/delete"><button class="btn btn-danger btn-sm" type="submit" data-open-dialog="delete-dialog">Удалить</button></form>
+    </section>
+  </div>
+</div>
+
+<dialog id="delete-dialog" aria-labelledby="delete-title">
+  <form method="post" action="{{.Base}}/expectations/{{$e.ID}}/delete">
+    <div class="dialog-body">
+      <h2 id="delete-title">Удалить «{{$e.Name}}»?</h2>
+      <p class="muted">{{if .ProbeText}}Сервис перестанет проверять этот адрес.{{else}}URL приёма перестанет работать: задача, которая шлёт сигналы, получит 404.{{end}} Ожидание исчезнет из списка.</p>
+    </div>
+    <div class="dialog-foot">
+      <button class="btn btn-ghost" type="button" data-close-dialog>Отмена</button>
+      <button class="btn btn-danger-solid" type="submit">Удалить</button>
+    </div>
+  </form>
+</dialog>
+{{template "app-end" .}}{{end}}
+
+{{/* ---------- Create / edit ---------- */}}
+
+{{define "unit-options"}}
+<option value="60" {{if eq . 60}}selected{{end}}>минут</option>
+<option value="3600" {{if eq . 3600}}selected{{end}}>часов</option>
+<option value="86400" {{if eq . 86400}}selected{{end}}>дней</option>
+<option value="1" {{if eq . 1}}selected{{end}}>секунд</option>
+{{end}}
+
+{{define "form"}}{{template "app-start" .}}
+{{$f := .Form}}
+<nav class="crumbs" aria-label="Навигация"><a href="{{.Base}}/">Ожидания</a><span aria-hidden="true">/</span>{{if $f.IsNew}}<span style="color:var(--ink)">Новое</span>{{else}}<a href="{{.Base}}/expectations/{{$f.ID}}">{{$f.Name}}</a><span aria-hidden="true">/</span><span style="color:var(--ink)">Изменить</span>{{end}}</nav>
+<h1 class="title">{{if $f.IsNew}}Новое ожидание{{else}}Изменить ожидание{{end}}</h1>
+
+<div class="cols">
+  <form class="col-main" method="post" action="{{.Base}}/expectations{{if not $f.IsNew}}/{{$f.ID}}{{end}}" data-switch data-schedule-form>
+    {{if .Error}}<p class="alert" role="alert">{{.Error}}</p>{{end}}
+    <section class="card card-pad" style="gap:18px">
+      <h2 class="step">1. Что ждём</h2>
+      <label class="field">Название<input class="input" name="name" required maxlength="200" value="{{$f.Name}}" placeholder="Например, ночной бэкап базы"><span class="help">Так ожидание будет называться в списке и в уведомлениях.</span></label>
+      {{if $f.IsNew}}
+      <div class="choice-grid" role="radiogroup" aria-label="Откуда берётся сигнал">
+        <label class="choice"><input type="radio" name="source" value="intake" {{if ne $f.Source "probe"}}checked{{end}}><span class="choice-title">Сигнал от задачи</span><span class="choice-sub">Задача сама вызывает URL приёма после работы</span></label>
+        <label class="choice"><input type="radio" name="source" value="probe" {{if eq $f.Source "probe"}}checked{{end}}><span class="choice-title">Проверка URL</span><span class="choice-sub">Сервис сам запрашивает сайт или API по расписанию</span></label>
+      </div>
+      {{else}}
+      <input type="hidden" name="source" value="{{$f.Source}}">
+      {{end}}
+      <div data-when="source=probe" class="form-stack" style="gap:14px">
+        <div class="field"><span id="probe-label">Запрос</span>
+          <div class="combo">
+            <select class="input" name="probe_method" aria-label="Метод" style="flex:0 0 120px">
+              {{range .Methods}}<option value="{{.}}" {{if eq . $f.ProbeMethod}}selected{{end}}>{{.}}</option>{{end}}
+            </select>
+            <input class="input mono" name="probe_url" type="url" value="{{$f.ProbeURL}}" placeholder="https://example.com/health" aria-labelledby="probe-label">
+          </div>
+        </div>
+        <div class="grid-2">
+          <label class="field">Ожидаемый код ответа<input class="input mono" name="probe_status" type="number" min="100" max="599" value="{{$f.ProbeStatus}}" placeholder="любой 2xx"><span class="help">Пусто — подходит любой 2xx.</span></label>
+          <label class="field">Таймаут, секунд<input class="input mono" name="probe_timeout" type="number" min="1" max="60" value="{{$f.ProbeTimeout}}"></label>
+        </div>
+      </div>
+    </section>
+
+    <section class="card card-pad" style="gap:18px">
+      <h2 class="step">2. Как часто</h2>
+      <div class="choice-grid" role="radiogroup" aria-label="Вид расписания">
+        <label class="choice"><input type="radio" name="kind" value="interval" {{if ne $f.Kind "cron"}}checked{{end}}><span class="choice-title">Интервал</span><span class="choice-sub">Раз в N времени от последнего ok</span></label>
+        <label class="choice"><input type="radio" name="kind" value="cron" {{if eq $f.Kind "cron"}}checked{{end}}><span class="choice-title">По расписанию (cron)</span><span class="choice-sub">После каждого запуска cron</span></label>
+      </div>
+
+      <div data-when="kind=interval">
+        <div class="field"><span id="period-label">Период</span>
+          <div class="combo">
+            <input class="input" name="period_value" type="number" min="1" value="{{$f.PeriodValue}}" aria-labelledby="period-label">
+            <select class="input" name="period_unit" aria-label="Единица периода">{{template "unit-options" $f.PeriodUnit}}</select>
+          </div>
+        </div>
+      </div>
+
+      <div data-when="kind=cron" class="form-stack" style="gap:14px">
+        <div class="presets" role="group" aria-label="Частые расписания">
+          <button class="chip" type="button" data-preset="0 * * * *">Каждый час</button>
+          <button class="chip" type="button" data-preset="0 3 * * *">Каждый день в 03:00</button>
+          <button class="chip" type="button" data-preset="0 9 * * 1-5">По будням в 09:00</button>
+          <button class="chip" type="button" data-preset="0 0 1 * *">1-го числа</button>
+        </div>
+        <div class="grid-2">
+          <label class="field">Выражение cron<input class="input mono" name="cron" value="{{$f.Cron}}" placeholder="0 3 * * *" autocomplete="off" spellcheck="false"><span class="help tone-ok" data-cron-hint>Пять полей: минута, час, день, месяц, день недели</span></label>
+          <label class="field">Часовой пояс<input class="input" name="timezone" value="{{$f.Timezone}}" list="tz-list" placeholder="UTC" autocomplete="off"><span class="help">IANA, например Europe/Moscow</span></label>
+        </div>
+        <datalist id="tz-list"><option value="UTC"></option><option value="Europe/Moscow"></option><option value="Europe/Berlin"></option><option value="Europe/London"></option><option value="Asia/Almaty"></option><option value="Asia/Yekaterinburg"></option><option value="Asia/Novosibirsk"></option><option value="America/New_York"></option></datalist>
+      </div>
+
+      <div class="field"><span id="slack-label">Допуск</span>
+        <div class="combo">
+          <input class="input" name="slack_value" type="number" min="0" value="{{$f.SlackValue}}" aria-labelledby="slack-label">
+          <select class="input" name="slack_unit" aria-label="Единица допуска">{{template "unit-options" $f.SlackUnit}}</select>
+        </div>
+        <span class="help">Запас сверх периода или запуска cron. Для проверки — сколько ждать успешного ответа. Также ограничивает прогон после begin.</span>
+      </div>
+    </section>
+
+    <section class="card card-pad">
+      <div class="card-head"><h2 class="step">3. Кого уведомить</h2><a class="small" href="{{.Base}}/outlets">+ Новый канал</a></div>
+      {{if .Outlets}}
+      <div class="choice-grid">
+        {{range .Outlets}}
+        <label class="check-card"><input type="checkbox" name="outlet_ids" value="{{.ID}}" {{if index $f.Selected .ID}}checked{{end}}><span style="min-width:0"><span style="display:block;font-weight:500">{{.Name}}</span><span class="help">{{kindLabel .Kind}}</span></span></label>
+        {{end}}
+      </div>
+      <p class="help">Уведомление уходит при переходе в «Просрочено» и при возврате во «Вовремя».</p>
+      {{else}}
+      <p class="note">{{template "ic-info"}}<span>Каналов пока нет. <a href="{{.Base}}/outlets">Добавьте почту, webhook или Telegram</a>, чтобы получать уведомления.</span></p>
+      {{end}}
+    </section>
+
+    <div class="form-foot">
+      <a class="btn btn-ghost" href="{{.Base}}{{if $f.IsNew}}/{{else}}/expectations/{{$f.ID}}{{end}}">Отмена</a>
+      <button class="btn btn-primary" type="submit">{{if $f.IsNew}}Создать ожидание{{else}}Сохранить{{end}}</button>
+    </div>
+  </form>
+
+  <aside class="col-side" aria-label="Предпросмотр">
+    <section class="card card-pad">
+      <h2>Как это сработает</h2>
+      <p class="small" style="line-height:1.55" data-summary>Ожидание получает сигнал ok по расписанию. Если окно закроется без него, ожидание станет просроченным.</p>
+    </section>
+    {{if $f.IsNew}}
+    <section class="dark-card">
+      <strong>После создания</strong>
+      <p>Для сигнала от задачи появится уникальный URL приёма — пример <span class="mono" style="color:#fff">curl</span> будет на странице ожидания. Проверка URL начнётся сразу.</p>
+    </section>
+    {{end}}
+  </aside>
+</div>
+{{template "app-end" .}}{{end}}
+
+{{/* ---------- Outlets ---------- */}}
+
+{{define "outlets"}}{{template "app-start" .}}
+{{$o := .Outlet}}
+<header class="page-head">
+  <div>
+    <h1>Каналы</h1>
+    <p class="lead">Куда отправлять уведомления. Каждое ожидание выбирает свой набор каналов. Настройки хранятся зашифрованными.</p>
+  </div>
+  {{if not $o.IsNew}}<a class="btn btn-primary" href="{{.Base}}/outlets">{{template "ic-plus"}}Новый канал</a>{{end}}
+</header>
+
+<div class="cols">
+  <div class="col-side" style="flex:1 1 320px">
+    {{if .Outlets}}
+    <ul class="outlet-list" aria-label="Каналы">
+      {{range .Outlets}}
+      <li>
+        <a class="outlet-card" href="{{$.Base}}/outlets/{{.ID}}" {{if sameID .ID $o.ID}}aria-current="page"{{end}}>
+          {{template "kind-icon" .Kind}}
+          <span class="meta">
+            <span style="font-size:15px;font-weight:600">{{.Name}}</span>
+            <span class="mono help ellipsis">{{.Target}}</span>
+            <span class="help">{{if .Usage}}используется: {{.Usage}}{{else}}не используется{{end}}</span>
+          </span>
+        </a>
+      </li>
+      {{end}}
+    </ul>
+    {{else}}
+    <div class="card empty" style="padding:28px 20px"><h2>Каналов пока нет</h2><p>Добавьте почту, webhook или Telegram — туда придут уведомления о просрочке.</p></div>
+    {{end}}
+  </div>
+
+  <section class="card card-pad col-main" aria-label="Редактор канала" style="gap:18px">
+    <div class="card-head">
+      <h2 style="font-size:18px">{{if $o.IsNew}}Новый канал{{else}}{{$o.Name}}{{end}}</h2>
+      {{if not $o.IsNew}}<span class="help">{{if .Usage}}Используется в ожиданиях: {{.Usage}}{{else}}Не назначен ни одному ожиданию{{end}}</span>{{end}}
+    </div>
+    <form class="form-stack" method="post" action="{{.Base}}/outlets{{if not $o.IsNew}}/{{$o.ID}}{{end}}" data-switch style="gap:18px">
+      {{if .Error}}<p class="alert" role="alert">{{.Error}}</p>{{end}}
+      <label class="field">Название<input class="input" name="name" required maxlength="200" value="{{$o.Name}}" placeholder="Например, почта дежурным"></label>
+      <div class="field"><span id="kind-label">Тип</span>
+        <div class="seg-lg" role="radiogroup" aria-labelledby="kind-label">
+          <label><input type="radio" name="kind" value="smtp" {{if eq $o.Kind "smtp"}}checked{{end}}>Почта (SMTP)</label>
+          <label><input type="radio" name="kind" value="http" {{if eq $o.Kind "http"}}checked{{end}}>Webhook (HTTP)</label>
+          <label><input type="radio" name="kind" value="telegram" {{if eq $o.Kind "telegram"}}checked{{end}}>Telegram</label>
+        </div>
+      </div>
+
+      <div data-when="kind=smtp" class="form-stack" style="gap:16px">
+        <div class="grid-2">
+          <label class="field">От кого<input class="input" name="smtp_from" type="email" value="{{$o.SMTP.From}}" placeholder="lateness@company.com"></label>
+          <label class="field">Кому<input class="input" name="smtp_to" type="email" value="{{$o.SMTP.To}}" placeholder="oncall@company.com"></label>
+        </div>
+        <details class="box" open>
+          <summary>Сервер SMTP</summary>
+          <div class="grid-2">
+            <label class="field">Хост<input class="input mono" name="smtp_host" value="{{$o.SMTP.Host}}" placeholder="smtp.company.com"></label>
+            <label class="field">Порт<input class="input mono" name="smtp_port" type="number" min="1" max="65535" value="{{if $o.SMTP.Port}}{{$o.SMTP.Port}}{{end}}" placeholder="587"></label>
+            <label class="field">Шифрование<select class="input" name="smtp_security">
+              <option value="starttls" {{if eq $o.SMTP.Security "starttls"}}selected{{end}}>STARTTLS (обычно порт 587)</option>
+              <option value="tls" {{if eq $o.SMTP.Security "tls"}}selected{{end}}>TLS сразу (обычно порт 465)</option>
+              <option value="none" {{if eq $o.SMTP.Security "none"}}selected{{end}}>Без шифрования</option>
+            </select></label>
+            <span></span>
+            <label class="field">Пользователь<input class="input" name="smtp_username" value="{{$o.SMTP.Username}}" autocomplete="off"></label>
+            <label class="field">Пароль<input class="input" name="smtp_password" type="password" autocomplete="new-password" placeholder="{{if $o.HasPassword}}сохранён — пусто, чтобы оставить{{end}}"><span class="help">Оставьте пустым, если сервер без авторизации.</span></label>
+          </div>
+        </details>
+      </div>
+
+      <div data-when="kind=http" class="form-stack" style="gap:14px">
+        <label class="field">URL<input class="input mono" name="http_url" type="url" value="{{$o.HTTPURL}}" placeholder="https://hooks.company.com/lateness"><span class="help">Отправим POST с JSON уведомления.</span></label>
+        <div class="field"><span>Тело запроса</span>
+<pre class="code">{
+  "expectation_id": "…",
+  "name": "Ночной бэкап",
+  "from": "on_time",
+  "to": "late",
+  "reason": "window_closed",
+  "at": "2026-11-05T00:30:00Z"
+}</pre>
+        </div>
+      </div>
+
+      <div data-when="kind=telegram" class="form-stack" style="gap:14px">
+        <label class="field">Токен бота<input class="input mono" name="telegram_token" type="password" autocomplete="off" placeholder="{{if $o.HasToken}}сохранён — пусто, чтобы оставить{{else}}123456:ABC-DEF…{{end}}"><span class="help">Выдаёт @BotFather. Бота нужно добавить в чат.</span></label>
+        <label class="field">Chat ID<input class="input mono" name="telegram_chat" value="{{$o.ChatID}}" placeholder="-1001234567890 или @username"><span class="help">Числовой id чата или @имя публичного чата.</span></label>
+      </div>
+
+      <div class="editor-foot">
+        {{if $o.IsNew}}<span></span>{{else if .Usage}}<span class="help">Чтобы удалить канал, уберите его из ожиданий.</span>{{else}}<button class="btn btn-text-danger" type="submit" form="outlet-delete" data-open-dialog="outlet-delete-dialog">Удалить канал</button>{{end}}
+        <div class="actions">
+          {{if not $o.IsNew}}<a class="btn btn-ghost" href="{{.Base}}/outlets/{{$o.ID}}">Отменить</a>{{end}}
+          <button class="btn btn-primary" type="submit">{{if $o.IsNew}}Создать канал{{else}}Сохранить{{end}}</button>
+        </div>
+      </div>
+    </form>
+    {{if and (not $o.IsNew) (not .Usage)}}<form id="outlet-delete" method="post" action="{{.Base}}/outlets/{{$o.ID}}/delete" hidden></form>{{end}}
+  </section>
+</div>
+
+{{if not $o.IsNew}}
+<dialog id="outlet-delete-dialog" aria-labelledby="outlet-delete-title">
+  <form method="post" action="{{.Base}}/outlets/{{$o.ID}}/delete">
+    <div class="dialog-body"><h2 id="outlet-delete-title">Удалить канал «{{$o.Name}}»?</h2><p class="muted">Канал исчезнет из списка. Уже поставленные в очередь уведомления будут доставлены.</p></div>
+    <div class="dialog-foot"><button class="btn btn-ghost" type="button" data-close-dialog>Отмена</button><button class="btn btn-danger-solid" type="submit">Удалить</button></div>
+  </form>
+</dialog>
+{{end}}
+{{template "app-end" .}}{{end}}
+
+{{/* ---------- Admin: invites ---------- */}}
+
+{{define "invite-state"}}{{if eq . "active"}}<span class="pill s-on_time"><span class="dot"></span>активно</span>{{else if eq . "used"}}<span class="pill s-quiet"><span class="dot"></span>использовано</span>{{else if eq . "expired"}}<span class="pill s-held"><span class="dot"></span>истекло</span>{{else}}<span class="pill s-late"><span class="dot"></span>отозвано</span>{{end}}{{end}}
+
+{{define "invites"}}{{template "app-start" .}}
+<header class="page-head">
+  <div>
+    <h1>Приглашения</h1>
+    <p class="lead">Регистрация закрыта: новый аккаунт создаётся только по ссылке-приглашению. Ссылка одноразовая и живёт 7 дней.</p>
+  </div>
+</header>
+
+{{if .InviteURL}}
+<section class="success" role="status">
+  <div style="display:flex;align-items:center;gap:10px">{{template "ic-check"}}<strong style="font-size:15px">Приглашение создано. Скопируйте ссылку сейчас — больше она показана не будет.</strong></div>
+  <div class="copy-field dark"><span class="mono" id="invite-url">{{.InviteURL}}</span><button class="copy-btn" type="button" data-copy-from="invite-url" hidden>Копировать</button></div>
+</section>
+{{end}}
+
+<section class="card card-pad">
+  <h2>Новое приглашение</h2>
+  <form class="form-stack" method="post" action="/admin/invites" style="gap:14px">
+    {{if .Error}}<p class="alert" role="alert">{{.Error}}</p>{{end}}
+    <label class="field">Пометка<input class="input" name="note" maxlength="200" placeholder="Кому и зачем, например «Аня, команда платежей»"></label>
+    <label class="check-card" style="max-width:420px"><input type="checkbox" name="admin" value="1"><span><span style="display:block;font-weight:500">Администратор</span><span class="help">Сможет выдавать приглашения</span></span></label>
+    <div class="form-foot"><button class="btn btn-primary" type="submit">{{template "ic-plus"}}Создать ссылку</button></div>
+  </form>
+</section>
+
+<section class="card">
+  {{if .Invites}}
+  <div class="scroll-x"><div style="min-width:620px">
+    <div class="krow thead" aria-hidden="true"><span>Пометка</span><span>Состояние</span><span>Создано</span><span></span></div>
+    {{range .Invites}}
+    <div class="krow">
+      <span>{{if .Note}}{{.Note}}{{else}}<span class="muted">без пометки</span>{{end}}{{if .Admin}} <span class="tag">админ</span>{{end}}</span>
+      <span>{{template "invite-state" .State}}</span>
+      <span class="mono small">{{template "time" .CreatedAt}}</span>
+      {{if eq .State "active"}}<form class="inline-form" method="post" action="/admin/invites/{{.ID}}/revoke"><button class="btn btn-text-danger btn-sm" type="submit">Отозвать</button></form>{{else}}<span></span>{{end}}
+    </div>
+    {{end}}
+  </div></div>
+  {{else}}
+  <div class="empty"><h2>Приглашений пока нет</h2><p>Создайте ссылку и отправьте её человеку, которому нужен доступ.</p></div>
+  {{end}}
+</section>
+{{template "app-end" .}}{{end}}
+
+{{/* ---------- Profile ---------- */}}
+
+{{define "profile"}}{{template "app-start" .}}
+{{$p := .Profile}}
+<header class="page-head"><div><h1>Профиль</h1><p class="lead">{{.Me.Display}}{{if .Me.Admin}} · администратор{{end}}</p></div></header>
+{{if .Notice}}<p class="success" role="status" style="flex-direction:row;align-items:center;gap:10px">{{template "ic-check"}}<span>{{.Notice}}</span></p>{{end}}
+{{if .Error}}<p class="alert" role="alert">{{.Error}}</p>{{end}}
+
+<section class="card card-pad">
+  <h2>Имя</h2>
+  <form class="form-stack" method="post" action="/profile" style="gap:14px">
+    <label class="field"><span class="sr-only">Имя</span><input class="input" name="name" maxlength="200" required value="{{$p.Account.Name}}" placeholder="Как к вам обращаться"></label>
+    <div class="form-foot"><button class="btn btn-primary" type="submit">Сохранить</button></div>
+  </form>
+</section>
+
+<section class="card card-pad" aria-label="Способы входа">
+  <div><h2>Способы входа</h2><p class="help" style="margin-top:4px">Нужен хотя бы один. Привязанный аккаунт провайдера входит сразу в этот профиль.</p></div>
+  <div class="method-list">
+    <div class="method">
+      <span class="kind-icon k-smtp" aria-hidden="true">@</span>
+      <span class="meta"><span style="font-weight:600">Почта и пароль</span><span class="help">{{if $p.HasPassword}}{{$p.Account.Email}}{{else}}пароль не задан{{end}}</span></span>
+      <span class="help">{{if $p.HasPassword}}включён{{end}}</span>
+    </div>
+    {{range .SignIn}}
+    <div class="method">
+      <span class="kind-icon k-{{.ID}}" aria-hidden="true">{{if eq .ID "telegram"}}TG{{else if eq .ID "vk"}}VK{{else}}ID{{end}}</span>
+      <span class="meta"><span style="font-weight:600">{{.Label}}</span><span class="help">{{with .Linked}}привязан{{if .Email}} · {{.Email}}{{end}}{{else}}не привязан{{end}}</span></span>
+      {{if .Linked}}
+        {{if .LastOnly}}<span class="help">последний способ</span>{{else}}<form class="inline-form" method="post" action="/profile/identities/{{.ID}}/unlink"><button class="btn btn-text-danger btn-sm" type="submit">Отвязать</button></form>{{end}}
+      {{else if .CanLink}}
+        <form class="inline-form" method="post" action="/auth/{{.ID}}"><input type="hidden" name="link" value="1"><button class="btn btn-ghost btn-sm" type="submit">Привязать</button></form>
+      {{end}}
+    </div>
+    {{end}}
+  </div>
+</section>
+
+<section class="card card-pad" aria-label="Пароль">
+  <details class="box" {{if or .Password (not $p.HasPassword)}}open{{end}}>
+    <summary>{{if $p.HasPassword}}Сменить пароль{{else}}Задать почту и пароль{{end}}</summary>
+    <form class="form-stack" method="post" action="/profile/password" style="gap:14px;margin-top:14px">
+      {{if not $p.Account.Email}}<label class="field">Почта<input class="input" name="email" type="email" autocomplete="username" required placeholder="you@company.com"><span class="help">Станет логином для входа по паролю.</span></label>{{else}}<input type="hidden" name="email" value="{{$p.Account.Email}}" autocomplete="username">{{end}}
+      {{if $p.HasPassword}}<label class="field">Текущий пароль<input class="input" name="current" type="password" autocomplete="current-password" required></label>{{end}}
+      <label class="field"><span style="display:flex;justify-content:space-between">Новый пароль<span class="help">не короче 8 символов</span></span><input class="input" name="password" type="password" autocomplete="new-password" required minlength="8"></label>
+      <p class="help">После смены пароля все остальные сессии завершатся.</p>
+      <div class="form-foot"><button class="btn btn-primary" type="submit">Сохранить пароль</button></div>
+    </form>
+  </details>
+</section>
+{{template "app-end" .}}{{end}}

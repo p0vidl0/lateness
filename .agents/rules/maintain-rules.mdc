@@ -1,0 +1,18 @@
+---
+description: Keep .agents/rules up to date with repo workflow patterns
+alwaysApply: true
+---
+
+# Maintain agent rules
+
+When a recurring workflow changes, update the matching rule in `.agents/rules/` in the same task. `.cursor/rules/` holds symlinks — edit the canonical file under `.agents/rules/`.
+
+| What changed | Rule file |
+|---|---|
+| Pages, scenarios, SQL, outlets, probes, sign-in, backend tests, deploy and CI | `.agents/rules/service-workflow.mdc` |
+| When to run lint and tests before "done" | `.agents/rules/verify-before-done.mdc` |
+| Long shell (`make test-integration`, `make test-e2e`, docker) | `.agents/rules/shell-long-commands.mdc` |
+| How rules themselves are maintained | this file |
+| Human overview of the layout | `docs/engineering/agents.md` |
+
+Rules are short checklists. Do not copy them into `docs/engineering/agents.md`.

@@ -1,0 +1,62 @@
+---
+description: Lateness service workflow (Go, pages, scenarios, SQL)
+globs: backend/**
+alwaysApply: false
+---
+
+# Lateness service workflow
+
+One module, binary `lateness`: roles `serve` and `sweep`, commands `invite` and `receiver` (e2e fake). Layers: `internal/domain` and `internal/schedule` have no I/O, scenarios live in `internal/app`, HTTP is `internal/web`, SQL stays in `internal/adapters/postgres`.
+
+There is no management API. The only public endpoints are `POST /intake/{token}`, `/healthz`, `/readyz`, the login, invite and provider callback pages. Account pages (`/profile`, `/projects/new`, `/admin/invites`) need a session; project pages also need ownership.
+
+## New page or form
+
+1. Route in `web.Handler.Routes`. Project pages go under `/p/{project}`: `requireProject` already checked ownership, take the project with `project(r)`.
+2. Handler stays thin: parse the form, call `app`, render or redirect (303). Map `app.ErrInvalid` to the form with a message, everything else to `h.fail`.
+3. Template in `templates/pages.html`, data in `view`. Extend `TestTemplatesRender`. Pages work without JS; `assets/app.js` only enhances.
+4. Never render a secret (outlet password, bot token). An empty secret field means "keep".
+
+## Where things go
+
+| Change | Where |
+|---|---|
+| Status, outcome, intake body, outlet or probe rules | `internal/domain` + unit test |
+| Interval or cron instant | `internal/schedule` + unit test. Pass `time.Time`; do not sleep. |
+| Account, invite, project, expectation, probe, sweep decision | `internal/app`. Pure decisions (`signalChange`, `probeChange`, `openWindow`) get unit tests. |
+| Ownership | Only `Service.Project(me, id)`. Store methods below it take `projectID`. |
+| Tables | `internal/migrate/sql/001_init.sql`, edited in place until the first release. `serve` applies it; `sweep` and `invite` only check `migrate.Version`. |
+| Expectation writes | `Store.Commit(app.Change)`: optimistic check on `version`; a stale write is `ErrConflict`. |
+| Deletes of projects, expectations, outlets | Soft: set `deleted_at`; every read filters `deleted_at IS NULL` on its own table. Deleting a project marks its children in the same transaction. |
+| Outlet kind (SMTP, HTTP, Telegram) | Settings struct and `Validate` in `domain/outlet.go`, sending in `internal/adapters/delivery`. Settings are sealed by the store; never add plain secret columns. |
+| Probe behaviour | Request in `internal/adapters/probe` (keep the private-address guard), scheduling in `app/signals.go`. |
+| Sign-in provider | `internal/adapters/authprovider` implementing `app.AuthProvider`: an OIDC provider is an `authprovider.NewOIDC` instance (see `NewTelegram`). Register in `cmd/lateness/serve.go`. Login, link and profile pages need no change. |
+| Config | `internal/config` + `.docker/env/template.env` + every profile. |
+| Go version bump | `go.mod` `go` line, `LATENESS_IMAGE_GOLANG` in `.docker/pinned-images.env`, `ARG GOLANG_IMAGE` in `.docker/Dockerfile.dev`, the build stage in `.deploy/Dockerfile` — same patch everywhere. |
+| New production env variable | `internal/config`; non-secret → `.deploy/config.env`; secret → `.deploy/secrets.env.example`, the `deploy` job env and its secrets.env loop in `.github/workflows/deploy-vps.yml`, and `.deploy/README.md`. |
+| CI | `.github/workflows/deploy-vps.yml` calls make targets; a new check goes into a make target first, then into `test-manual` and the workflow. |
+
+## Commands
+
+```bash
+make test-manual         # everything: config, gofmt/tidy/vet, lint, unit, vulncheck, integration, e2e
+make vulncheck           # govulncheck, pinned via the tool directive in go.mod
+make backend-lint
+make test-unit
+make test-integration    # LATENESS_INTEGRATION=1, own compose project, trap down -v
+make test-e2e            # host serve + sweep, see docs/testing/e2e-coverage.md
+make dev-up
+make invite ADMIN=1
+```
+
+`make test` does not start Docker.
+
+## Vocabulary
+
+Do not introduce check, ping, channel, flip, nag, badge, grace or workspace as names in code, schema, metrics, or mail. The allowance on a window is `slack`. The period is `period`. Notification targets are outlets (Telegram target is `chat_id`). A service-made request is a `probe`. Ownership unit is a `project`. Sign-up goes through an `invite`; external sign-in is an `identity`.
+
+## Principles
+
+- New observable behavior gets the lowest test that can see it.
+- Do not commit unless the user asks.
+- A new stable pattern updates this file (`maintain-rules.mdc`).

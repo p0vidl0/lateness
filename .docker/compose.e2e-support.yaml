@@ -1,0 +1,34 @@
+# Added to the integration compose file for e2e: the outlet/probe receiver and the
+# test SMTP server. serve and sweep run on the host. Project name lateness-e2e.
+services:
+  outlet-receiver:
+    build:
+      context: ..
+      dockerfile: .docker/Dockerfile.dev
+      args:
+        GOLANG_IMAGE: ${LATENESS_IMAGE_GOLANG}
+    command: ["receiver"]
+    volumes:
+      - ../backend:/src
+    environment:
+      LATENESS_RECEIVER_ADDR: ":8080"
+    ports:
+      - "${LATENESS_RECEIVER_PORT}:8080"
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8080/healthz"]
+      interval: 2s
+      timeout: 3s
+      retries: 20
+
+  smtp:
+    image: ${LATENESS_IMAGE_SMTP}
+    environment:
+      AUTH_SCHEME: none
+    ports:
+      - "${LATENESS_SMTP_PORT}:1025"
+      - "${LATENESS_SMTP_API_PORT}:4437"
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:4437/mailcount"]
+      interval: 2s
+      timeout: 3s
+      retries: 30

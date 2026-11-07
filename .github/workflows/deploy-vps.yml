@@ -1,0 +1,177 @@
+name: CI / Deploy VPS
+
+# Every push and pull request runs all checks and builds the image.
+# Only a push to master (or a manual run on master) pushes the image to GHCR and deploys.
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  GOLANGCI_LINT_VERSION: v2.15.0
+
+jobs:
+  checks:
+    name: config, validate, vulncheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: backend/go.mod
+          cache-dependency-path: backend/go.sum
+      - name: Install golangci-lint
+        run: go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@${GOLANGCI_LINT_VERSION}
+      - run: make check-config
+      - run: make validate
+      - run: make vulncheck
+
+  integration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: backend/go.mod
+          cache-dependency-path: backend/go.sum
+      - run: make test-integration
+
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: backend/go.mod
+          cache-dependency-path: backend/go.sum
+      - run: make test-e2e
+      - name: Host process logs
+        if: failure()
+        run: tail -n 200 .docker/e2e-host-run/logs/*.log || true
+
+  image:
+    needs: [checks, integration, e2e]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      image: ${{ steps.image_ref.outputs.image }}
+    env:
+      PUBLISH: ${{ github.ref == 'refs/heads/master' && github.event_name != 'pull_request' }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: docker/setup-buildx-action@v4
+
+      - name: Log in to GHCR
+        if: env.PUBLISH == 'true'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Docker metadata
+        id: meta
+        uses: docker/metadata-action@v6
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            type=sha,prefix=
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build (and push on master)
+        id: build
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: .deploy/Dockerfile
+          push: ${{ env.PUBLISH == 'true' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            GIT_COMMIT=${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Image reference for deploy
+        id: image_ref
+        if: env.PUBLISH == 'true'
+        run: echo "image=ghcr.io/${{ github.repository }}@${{ steps.build.outputs.digest }}" >> "$GITHUB_OUTPUT"
+
+  deploy:
+    needs: image
+    if: github.ref == 'refs/heads/master' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Start ssh-agent
+        uses: webfactory/ssh-agent@v0.10.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_KEY }}
+
+      - name: Configure SSH known_hosts
+        env:
+          SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          if [ -n "$SSH_KNOWN_HOSTS" ]; then
+            echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          else
+            ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts
+          fi
+          chmod 644 ~/.ssh/known_hosts
+
+      - name: Upload compose files and restart stack
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_PATH: ${{ secrets.SSH_PATH }}
+          LATENESS_IMAGE: ${{ needs.image.outputs.image }}
+          LATENESS_DATABASE_URL: ${{ secrets.LATENESS_DATABASE_URL }}
+          LATENESS_SECRET_KEY: ${{ secrets.LATENESS_SECRET_KEY }}
+          LATENESS_VK_CLIENT_ID: ${{ secrets.LATENESS_VK_CLIENT_ID }}
+          LATENESS_VK_CLIENT_SECRET: ${{ secrets.LATENESS_VK_CLIENT_SECRET }}
+          LATENESS_TELEGRAM_LOGIN_CLIENT_ID: ${{ secrets.LATENESS_TELEGRAM_LOGIN_CLIENT_ID }}
+          LATENESS_TELEGRAM_LOGIN_CLIENT_SECRET: ${{ secrets.LATENESS_TELEGRAM_LOGIN_CLIENT_SECRET }}
+          LATENESS_TELEGRAM_API_URL: ${{ secrets.LATENESS_TELEGRAM_API_URL }}
+        run: |
+          set -euo pipefail
+          : "${LATENESS_IMAGE:?image was not published}"
+          : "${LATENESS_DATABASE_URL:?secret LATENESS_DATABASE_URL is missing}"
+          : "${LATENESS_SECRET_KEY:?secret LATENESS_SECRET_KEY is missing}"
+          REMOTE_DIR="${SSH_PATH%/}"
+          umask 077
+          {
+            echo "LATENESS_IMAGE=${LATENESS_IMAGE}"
+            echo "LATENESS_DATABASE_URL=${LATENESS_DATABASE_URL}"
+            echo "LATENESS_SECRET_KEY=${LATENESS_SECRET_KEY}"
+            for key in LATENESS_VK_CLIENT_ID LATENESS_VK_CLIENT_SECRET \
+                       LATENESS_TELEGRAM_LOGIN_CLIENT_ID LATENESS_TELEGRAM_LOGIN_CLIENT_SECRET \
+                       LATENESS_TELEGRAM_API_URL; do
+              if [ -n "${!key:-}" ]; then echo "${key}=${!key}"; fi
+            done
+          } > secrets.env
+          ssh "${SSH_USER}@${SSH_HOST}" "mkdir -p '${REMOTE_DIR}'"
+          scp .deploy/config.env .deploy/compose.yaml secrets.env "${SSH_USER}@${SSH_HOST}:${REMOTE_DIR}/"
+          ssh "${SSH_USER}@${SSH_HOST}" "set -euo pipefail
+            cd '${REMOTE_DIR}'
+            chmod 600 secrets.env
+            cat config.env secrets.env > .env
+            chmod 600 .env
+            docker compose -f compose.yaml pull
+            docker compose -f compose.yaml up -d --wait --wait-timeout 120
+            docker image prune -f >/dev/null"

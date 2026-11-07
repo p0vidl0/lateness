@@ -1,0 +1,46 @@
+---
+description: Before reporting success — run lint and tests for the touched area
+alwaysApply: true
+---
+
+# Verify before done
+
+Before saying a task is **done**, run checks for the parts of the repo you changed. Do not declare success from edit or build alone.
+
+## Required when
+
+Any non-trivial change to code or contracts: pages, intake, migrations, scenarios, sweep, probes, delivery, sign-in.
+
+## Skip when
+
+Obvious tiny edits with no test impact: a typo in docs, one sentence in a README, one already-verified comment.
+
+When unsure — run the checks.
+
+## New behavior → add tests
+
+New observable behavior gets a test at the **lowest** layer that can see it. Do not repeat a lower layer in e2e. Skip tests that only assert mocks or wiring.
+
+| Area | Prefer | E2E when |
+|---|---|---|
+| `internal/domain`, `internal/schedule`, pure `app` decisions, adapters against `httptest` (delivery, probe, provider), page rendering | Unit next to the package. Pass a clock in; do not sleep. | No |
+| `app` scenarios against Postgres: invites, projects, soft delete, sweep writing a transition and a delivery row, probe claims | `//go:build integration` | No |
+| A live `serve` plus a live `sweep` | — | `//go:build e2e`. Add a row to `docs/testing/e2e-coverage.md`. |
+
+## Minimum
+
+| Touched | Before reporting |
+|---|---|
+| `backend/**` logic | `make backend-lint` and `make test-unit` |
+| SQL, scenarios against Postgres, sweep persistence | `make test-integration` as well |
+| Compose, env profiles, host e2e script, the two-process path, outlets talking to real servers | `make check-config` and `make test-e2e` |
+| `.deploy/` (Dockerfile, compose, config.env) or `cmd/lateness` | `make check-config` and `make deploy-image` |
+| `.github/workflows/` | Keep jobs calling make targets, not inline commands; run the same targets locally |
+| `go.mod`, a new dependency, the Go version | `make vulncheck` as well |
+| Wide or cross-cutting change, or the user asks for a full run | `make test-manual` (everything in order, stops at the first failure) |
+
+## Reporting
+
+1. Fix a failed lint or test before saying done.
+2. Say what you ran and which tests you added (or why none were needed).
+3. Do not commit unless the user asks.

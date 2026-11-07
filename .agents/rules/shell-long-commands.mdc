@@ -1,0 +1,53 @@
+---
+description: How to run and read long shell commands (make test-integration, make test-e2e)
+alwaysApply: true
+---
+
+# Long shell commands
+
+## Do not
+
+- Pipe a long command into `tail`/`head` in the same Shell call when you need to wait for completion (`make test-integration 2>&1 | tail -40` buffers stdout, loses the exit code, wastes `block_until_ms`).
+- Re-wait the same command if the user says it already finished — read the terminal file.
+- Use `block_until_ms: 30000` for `make test-integration`, `make test-e2e`, `make test-manual`, or `docker compose up --wait` without backgrounding.
+
+## Patterns
+
+### 1. Short summary after completion (preferred)
+
+```bash
+LOG=/tmp/lateness-test-integration.log
+make test-integration >"$LOG" 2>&1; ec=$?
+echo "exit_code=$ec"
+tail -n 40 "$LOG"
+exit $ec
+```
+
+One Shell call, generous `block_until_ms` (see table), exit code preserved.
+
+### 2. Background + terminal file
+
+- `block_until_ms: 0` → background.
+- Read `terminals/<id>.txt` (footer `exit_code` / `last_exit_code`).
+- Poll with Await + a pattern (`exit_code:|FAIL|PASS|ok\\s+`) or re-read the terminal. Do not block forever with no pattern.
+
+### 3. User already ran the command
+
+- Read `terminals/*.txt` first.
+- Do not re-run `make test-integration` if you only need to interpret the result.
+
+## `block_until_ms` guide
+
+| Command | Minimum |
+|---|---|
+| `make test-integration` | 300000 |
+| `make test-e2e` | 300000 |
+| `make test-manual` | 600000 |
+| `make dev-up` (image build) | 300000 |
+| `make validate`, `go test ./... -short` | 120000 |
+
+When unsure — background (pattern 2) or a log file (pattern 1).
+
+## Report to the user
+
+Include the command, `exit_code`, and what you inspected (log tail or terminal file).

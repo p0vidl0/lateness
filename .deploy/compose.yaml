@@ -1,0 +1,58 @@
+# VPS: Traefik (external) → lateness serve; lateness sweep beside it. Compose V2.
+# Postgres runs outside this file, reachable on the external network lateness-db.
+
+x-app: &app
+  image: ${LATENESS_IMAGE}
+  restart: unless-stopped
+  env_file:
+    - config.env
+    - secrets.env
+  logging:
+    driver: json-file
+    options:
+      max-size: "50m"
+
+services:
+  serve:
+    <<: *app
+    command: ["serve"]
+    healthcheck:
+      test: ["CMD", "/lateness", "health"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 20s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=${TRAEFIK_NETWORK:-web}"
+      - "traefik.http.routers.lateness.rule=Host(`${LATENESS_DOMAIN}`)"
+      - "traefik.http.routers.lateness.entrypoints=websecure"
+      - "traefik.http.routers.lateness.tls.certresolver=${TRAEFIK_CERT_RESOLVER:-myresolver}"
+      - "traefik.http.routers.lateness.tls.domains[0].main=${LATENESS_DOMAIN}"
+      - "traefik.http.routers.lateness.middlewares=lateness-compress"
+      - "traefik.http.middlewares.lateness-compress.compress=true"
+      - "traefik.http.services.lateness.loadbalancer.server.port=8080"
+    networks:
+      traefik:
+      lateness-db:
+
+  # sweep waits for serve: serve owns the schema and applies migrations on start.
+  sweep:
+    <<: *app
+    command: ["sweep"]
+    depends_on:
+      serve:
+        condition: service_healthy
+    networks:
+      lateness-db:
+      # Outbound traffic (SMTP, webhooks, Telegram, probes) needs a non-internal network.
+      egress:
+
+networks:
+  traefik:
+    external: true
+    name: ${TRAEFIK_NETWORK:-web}
+  lateness-db:
+    external: true
+    name: lateness-db
+  egress:

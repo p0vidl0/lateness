@@ -1,0 +1,58 @@
+services:
+  serve:
+    build:
+      context: ..
+      dockerfile: .docker/Dockerfile.dev
+      args:
+        GOLANG_IMAGE: ${LATENESS_IMAGE_GOLANG}
+    command: ["serve"]
+    volumes:
+      - ../backend:/src
+    environment: &app-env
+      LATENESS_DATABASE_URL: ${LATENESS_DATABASE_URL}
+      LATENESS_SECRET_KEY: ${LATENESS_SECRET_KEY}
+      LATENESS_HTTP_ADDR: ${LATENESS_HTTP_ADDR}
+      LATENESS_PUBLIC_URL: ${LATENESS_PUBLIC_URL}
+      LATENESS_SESSION_TTL: ${LATENESS_SESSION_TTL}
+      LATENESS_SWEEP_INTERVAL: ${LATENESS_SWEEP_INTERVAL}
+      LATENESS_SMTP_INSECURE_TLS: ${LATENESS_SMTP_INSECURE_TLS}
+      LATENESS_PROBE_ALLOW_PRIVATE: ${LATENESS_PROBE_ALLOW_PRIVATE}
+      LATENESS_TELEGRAM_API_URL: ${LATENESS_TELEGRAM_API_URL}
+      LATENESS_VK_CLIENT_ID: ${LATENESS_VK_CLIENT_ID}
+      LATENESS_VK_CLIENT_SECRET: ${LATENESS_VK_CLIENT_SECRET}
+      LATENESS_TELEGRAM_LOGIN_CLIENT_ID: ${LATENESS_TELEGRAM_LOGIN_CLIENT_ID}
+      LATENESS_TELEGRAM_LOGIN_CLIENT_SECRET: ${LATENESS_TELEGRAM_LOGIN_CLIENT_SECRET}
+      LATENESS_SEED_EMAIL: ${LATENESS_SEED_EMAIL}
+      LATENESS_SEED_PASSWORD: ${LATENESS_SEED_PASSWORD}
+      LATENESS_SEED_SMTP_HOST: ${LATENESS_SEED_SMTP_HOST}
+      LATENESS_SEED_SMTP_PORT: ${LATENESS_SEED_SMTP_PORT}
+      LATENESS_SEED_SMTP_SECURITY: ${LATENESS_SEED_SMTP_SECURITY}
+      LATENESS_SEED_SMTP_FROM: ${LATENESS_SEED_SMTP_FROM}
+      LATENESS_SEED_SMTP_TO: ${LATENESS_SEED_SMTP_TO}
+    ports:
+      - "${LATENESS_HTTP_PORT}:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      smtp:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8080/readyz"]
+      interval: 5s
+      timeout: 3s
+      retries: 36
+      start_period: 20s
+
+  sweep:
+    build:
+      context: ..
+      dockerfile: .docker/Dockerfile.dev
+      args:
+        GOLANG_IMAGE: ${LATENESS_IMAGE_GOLANG}
+    command: ["sweep"]
+    volumes:
+      - ../backend:/src
+    environment: *app-env
+    depends_on:
+      serve:
+        condition: service_healthy

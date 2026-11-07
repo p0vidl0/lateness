@@ -1,0 +1,4 @@
+# Dev stack: postgres, test SMTP, serve, sweep. Project name lateness-dev.
+include:
+  - path: compose.infra.yaml
+  - path: compose.apps.yaml

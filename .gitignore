@@ -1,0 +1,15 @@
+# Secrets: never commit, wherever they appear.
+# .deploy/secrets.env and .deploy/.env are written on the server by CI; *.local.env holds local keys.
+.env
+secrets.env
+*.local.env
+
+# Generated env files (rendered from .docker/env/profiles by make render-env).
+.docker/env/*.env
+!.docker/env/template.env
+
+# Build and test output.
+.docker/e2e-host-run/
+bin/
+*.out
+.DS_Store

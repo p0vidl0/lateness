@@ -1,0 +1,30 @@
+# Dev infra: Postgres and a test SMTP server with a web inbox. Project lateness-dev.
+services:
+  postgres:
+    image: ${LATENESS_IMAGE_POSTGRES}
+    environment:
+      POSTGRES_USER: lateness
+      POSTGRES_PASSWORD: lateness
+      POSTGRES_DB: lateness
+    ports:
+      - "${LATENESS_POSTGRES_PORT}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lateness -d lateness"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  # Test SMTP inbox: implicit TLS SMTP on 1025 (self-signed), web UI on 4436, REST API on 4437.
+  smtp:
+    image: ${LATENESS_IMAGE_SMTP}
+    environment:
+      AUTH_SCHEME: none
+    ports:
+      - "${LATENESS_SMTP_PORT}:1025"
+      - "${LATENESS_SMTP_UI_PORT}:4436"
+      - "${LATENESS_SMTP_API_PORT}:4437"
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:4437/mailcount"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
